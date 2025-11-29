@@ -2,63 +2,81 @@
 
 {% block content %}
 <style>
-    /* CRITICAL FIX: When button is selected (White BG), force text to be Dark */
-    .btn-check:checked + .btn-outline-light,
-    .btn-outline-light:hover {
-        background-color: white !important;
-        border-color: white !important;
-        color: #0f172a !important; /* Dark Slate Color */
+    /* CRITICAL FIX: Custom styles for the Selection Cards */
+    .role-card-label {
+        transition: all 0.3s ease;
+        border: 2px solid var(--glass-border);
+        background: transparent;
+        color: var(--text-main);
     }
 
-    /* Force the main title text to be dark */
-    .btn-check:checked + .btn-outline-light span, 
-    .btn-outline-light:hover span {
-        color: #0f172a !important;
+    /* Hover State */
+    .role-card-label:hover {
+        border-color: var(--primary);
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 242, 96, 0.2);
     }
 
-    /* Force the subtitle/small text to be dark grey */
-    .btn-check:checked + .btn-outline-light small, 
-    .btn-outline-light:hover small {
-        color: #475569 !important;
+    /* SELECTED STATE (The Fix) */
+    .btn-check:checked + .role-card-label {
+        background-color: var(--primary) !important; /* Neon Green BG */
+        border-color: var(--primary) !important;
+        color: #000000 !important; /* Force BLACK text */
+        box-shadow: 0 0 20px rgba(0, 242, 96, 0.4);
+    }
+
+    /* Ensure icon/text inside inherit the black color when selected */
+    .btn-check:checked + .role-card-label * {
+        color: #000000 !important;
+    }
+    
+    /* Ensure muted text inside becomes dark grey when selected */
+    .btn-check:checked + .role-card-label .text-muted {
+        color: #333333 !important;
     }
 </style>
 
 <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+    <div class="row justify-content-center align-items-center" style="min-height: 80vh;">
+        <div class="col-lg-8 col-md-10">
             <div class="glass-card p-5 text-center">
                 <h2 class="fw-bold mb-3">One Last Step!</h2>
-                <!-- NAME CHANGE HERE -->
-                <p class="text-light opacity-75 mb-5">
-                    Welcome to Koach Smart. To set up your dashboard correctly, please tell us who you are.
+                <p class="text-muted opacity-75 mb-5 lead">
+                    Welcome to Koach Smart. To personalize your experience, please tell us who you are.
                 </p>
 
                 <form method="POST">
-                    <div class="row g-3">
+                    <div class="row g-4 justify-content-center">
                         <!-- Option 1: Coach -->
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <input type="radio" class="btn-check" name="role" id="roleCoach" value="coach" checked>
-                            <label class="btn btn-outline-light w-100 p-4 h-100 d-flex flex-column align-items-center justify-content-center" for="roleCoach">
-                                <i class="fas fa-running fa-3x mb-3 text-primary"></i>
-                                <span class="fw-bold d-block">I am a Coach</span>
-                                <small class="text-muted mt-2">I want to find jobs.</small>
+                            <label class="btn role-card-label w-100 p-4 h-100 d-flex flex-column align-items-center justify-content-center rounded-4" for="roleCoach">
+                                <div class="mb-3 p-3 rounded-circle bg-dark bg-opacity-10">
+                                    <i class="fas fa-running fa-3x"></i>
+                                </div>
+                                <h4 class="fw-bold d-block mb-1">I am a Coach</h4>
+                                <small class="text-muted">I want to find jobs & build my profile.</small>
                             </label>
                         </div>
 
                         <!-- Option 2: Employer -->
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <input type="radio" class="btn-check" name="role" id="roleEmp" value="employer">
-                            <label class="btn btn-outline-light w-100 p-4 h-100 d-flex flex-column align-items-center justify-content-center" for="roleEmp">
-                                <i class="fas fa-building fa-3x mb-3 text-secondary"></i>
-                                <span class="fw-bold d-block">I am an Academy</span>
-                                <small class="text-muted mt-2">I want to hire talent.</small>
+                            <label class="btn role-card-label w-100 p-4 h-100 d-flex flex-column align-items-center justify-content-center rounded-4" for="roleEmp">
+                                <div class="mb-3 p-3 rounded-circle bg-dark bg-opacity-10">
+                                    <i class="fas fa-building fa-3x"></i>
+                                </div>
+                                <h4 class="fw-bold d-block mb-1">I am an Academy</h4>
+                                <small class="text-muted">I want to hire top talent.</small>
                             </label>
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg w-100 mt-5">
-                        Complete Signup <i class="fas fa-arrow-right ms-2"></i>
-                    </button>
+                    <div class="mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold shadow-lg">
+                            Complete Signup <i class="fas fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -3,85 +3,270 @@
 {% block content %}
 <div class="container py-4">
     
-    <!-- Analytics Header -->
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <div class="glass-card p-3 d-flex align-items-center">
-                <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3"><i class="fas fa-eye text-primary fs-4"></i></div>
-                <div><h3 class="fw-bold mb-0 text-white">{{ views }}</h3><small class="text-muted">Views</small></div>
+    <!-- 1. HERO WELCOME SECTION -->
+    <div class="glass-card p-4 mb-5 position-relative overflow-hidden">
+        <div class="position-absolute top-0 end-0 p-5 bg-primary opacity-10 rounded-circle" style="filter: blur(60px); width: 200px; height: 200px; transform: translate(30%, -30%);"></div>
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-md-8">
+                <h5 class="text-muted text-uppercase letter-spacing-2 mb-1">Overview</h5>
+                <h1 class="fw-bold display-5 mb-2">Welcome back, <span class="text-primary">{{ current_user.profile.full_name.split()[0] }}</span></h1>
+                <p class="text-muted opacity-75 mb-0" id="currentDate"></p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-light">
+                    <i class="fas fa-user-edit me-2"></i>Edit Profile
+                </a>
             </div>
         </div>
-        <!-- ... (Keep other stats) ... -->
+    </div>
+
+    <!-- 2. EXPANDED STATS ROW -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-3"><i class="fas fa-eye text-primary fs-4"></i></div>
+                    {% if views > 0 %}<span class="badge bg-success text-dark">+{{ views }} this week</span>{% endif %}
+                </div>
+                <div><h3 class="fw-bold mb-0">{{ views }}</h3><small class="text-muted">Profile Views</small></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="bg-info bg-opacity-10 p-3 rounded-3"><i class="fas fa-paper-plane text-info fs-4"></i></div>
+                </div>
+                <div><h3 class="fw-bold mb-0">{{ my_apps|length }}</h3><small class="text-muted">Applications Sent</small></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-3"><i class="fas fa-star text-warning fs-4"></i></div>
+                </div>
+                <div><h3 class="fw-bold mb-0">{{ avg_rating }}<span class="fs-6 text-muted">/5</span></h3><small class="text-muted">Average Rating</small></div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="glass-card p-4 h-100 d-flex flex-column justify-content-between">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-3"><i class="fas fa-chart-pie text-success fs-4"></i></div>
+                    {% if profile_completion < 100 %}<i class="fas fa-exclamation-circle text-danger" title="Complete your profile"></i>{% endif %}
+                </div>
+                <div>
+                    <h3 class="fw-bold mb-0">{{ profile_completion }}%</h3>
+                    <div class="profile-progress-bar mt-2" style="height: 6px;"><div class="profile-progress-fill" style="width: {{ profile_completion }}%"></div></div>
+                    <small class="text-muted mt-1 d-block">Completion Score</small>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">
-        <!-- Main Feed -->
+        <!-- 3. MAIN COLUMN -->
         <div class="col-lg-8">
-            <h4 class="mb-4">Active Opportunities</h4>
-            
-            <div class="row g-3">
-                {% for job in jobs %}
-                <div class="col-md-12">
-                    <div class="glass-card p-4">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h5 class="fw-bold text-white mb-1">{{ job.title }}</h5>
-                                <p class="text-primary small mb-2">{{ job.employer.username }} • {{ job.location }}</p>
-                            </div>
-                            <span class="badge bg-light text-dark">{{ job.salary_range }}</span>
+            <ul class="nav nav-pills mb-4" id="dashboardTabs" role="tablist">
+                <li class="nav-item me-2"><button class="nav-link active rounded-pill px-4" id="jobs-tab" data-bs-toggle="tab" data-bs-target="#jobs-content"><i class="fas fa-briefcase me-2"></i>Explore Jobs</button></li>
+                <li class="nav-item"><button class="nav-link rounded-pill px-4" id="apps-tab" data-bs-toggle="tab" data-bs-target="#apps-content"><i class="fas fa-file-alt me-2"></i>My Applications</button></li>
+            </ul>
+
+            <div class="tab-content" id="dashboardTabsContent">
+                <!-- JOBS TAB -->
+                <div class="tab-pane fade show active" id="jobs-content">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">Recommended Opportunities</h4>
+                        <button class="btn btn-sm btn-outline-light" type="button" data-bs-toggle="collapse" data-bs-target="#filterPanel"><i class="fas fa-filter me-2"></i>Filters</button>
+                    </div>
+                    
+                    <!-- Collapsible Filters -->
+                    <div class="collapse mb-4" id="filterPanel">
+                        <div class="glass-card p-3">
+                            <form action="{{ url_for('dashboard') }}" method="GET" class="row g-3">
+                                <div class="col-md-4">
+                                    <select class="form-select form-select-sm" name="sport">
+                                        <option value="All">All Sports</option>
+                                        <option value="Cricket">Cricket</option>
+                                        <option value="Football">Football</option>
+                                        <option value="Tennis">Tennis</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-8"><button type="submit" class="btn btn-primary btn-sm w-100">Apply Filters</button></div>
+                            </form>
                         </div>
-                        
-                        <div class="mb-3">
-                            <p class="text-light opacity-75 small mb-1">{{ job.description }}</p>
-                            {% if job.requirements %}
-                                <div class="text-warning small"><i class="fas fa-exclamation-circle me-1"></i> Requires: {{ job.requirements }}</div>
-                            {% endif %}
-                        </div>
-                        
-                        <button class="btn btn-sm btn-primary w-100" data-bs-toggle="modal" data-bs-target="#applyModal{{ job.id }}">Apply Now</button>
                     </div>
 
-                    <!-- APPLY MODAL -->
-                    <div class="modal fade" id="applyModal{{ job.id }}" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content glass-card border-0 text-light">
-                                <form action="{{ url_for('apply_job', job_id=job.id) }}" method="POST" enctype="multipart/form-data">
-                                    <div class="modal-header border-bottom border-secondary">
-                                        <h5 class="modal-title">Apply for {{ job.title }}</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <!-- DYNAMIC SCREENING QUESTIONS -->
-                                        {% if job.screening_questions %}
-                                            <div class="mb-4 p-3 border border-info rounded bg-dark">
-                                                <h6 class="text-info mb-3 small fw-bold">Employer Questions</h6>
-                                                {% set questions = job.screening_questions.split('|') %}
-                                                {% for q in questions %}
-                                                    <div class="mb-3">
-                                                        <label class="form-label small text-white">{{ q }}</label>
-                                                        <input type="text" class="form-control form-control-sm" name="answer_{{ loop.index0 }}" required>
-                                                    </div>
-                                                {% endfor %}
+                    <div class="row g-3">
+                        {% for job in jobs %}
+                        <div class="col-md-12">
+                            <div class="glass-card p-4 hover-elevate transition-all">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="d-flex gap-3">
+                                        <div class="bg-secondary bg-opacity-25 rounded p-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                            <i class="fas fa-running text-white fs-3"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="fw-bold mb-1">{{ job.title }}</h5>
+                                            <p class="text-primary small mb-1">{{ job.employer.username }}</p>
+                                            <div class="d-flex gap-2 text-muted small">
+                                                <span><i class="fas fa-map-marker-alt me-1"></i> {{ job.location }}</span>
+                                                <span>•</span><span>{{ job.sport }}</span>
                                             </div>
-                                        {% endif %}
-
-                                        <div class="mb-3">
-                                            <label class="form-label text-muted small">Upload Specific Resume</label>
-                                            <input type="file" class="form-control" name="custom_resume" accept=".pdf,.doc">
                                         </div>
                                     </div>
-                                    <div class="modal-footer border-top border-secondary">
-                                        <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+                                    <div class="text-end">
+                                        <span class="badge bg-light text-dark mb-2">{{ job.salary_range }}</span><br>
+                                        <small class="text-muted">{{ job.posted_date.strftime('%d %b') }}</small>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="mt-3 pt-3 border-top border-secondary d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">{{ job.description[:100] }}...</small>
+                                    <button class="btn btn-sm btn-primary px-4" data-bs-toggle="modal" data-bs-target="#applyModal{{ job.id }}">Apply</button>
+                                </div>
+                            </div>
+                            
+                            <!-- APPLY MODAL -->
+                            <div class="modal fade" id="applyModal{{ job.id }}" tabindex="-1">
+                                <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content glass-card border-0">
+                                        <form action="{{ url_for('apply_job', job_id=job.id) }}" method="POST" enctype="multipart/form-data">
+                                            <div class="modal-header border-bottom border-secondary">
+                                                <h5 class="modal-title">Apply for {{ job.title }}</h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                {% if job.screening_questions %}
+                                                    <div class="mb-3 p-3 border border-info rounded bg-dark">
+                                                        <h6 class="text-info mb-2 small fw-bold">Screening Questions</h6>
+                                                        {% for q in job.screening_questions.split('|') %}
+                                                            <div class="mb-2">
+                                                                <label class="form-label small">{{ q }}</label>
+                                                                <input type="text" class="form-control form-control-sm" name="answer_{{ loop.index0 }}" required>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                                <div class="mb-3">
+                                                    <label class="form-label text-muted small">Specific Resume</label>
+                                                    <input type="file" class="form-control" name="custom_resume" accept=".pdf,.doc">
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-top border-secondary">
+                                                <button type="submit" class="btn btn-primary w-100">Submit Application</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="col-12 text-center py-5">
+                            <div class="glass-card p-5">
+                                <div class="mb-3 opacity-50"><i class="fas fa-search-location fa-4x text-muted"></i></div>
+                                <h5>No active jobs found</h5>
+                                <p class="text-muted">Try adjusting your filters or check back later.</p>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
-                {% endfor %}
+
+                <!-- APPS TAB -->
+                <div class="tab-pane fade" id="apps-content">
+                    <h4 class="fw-bold mb-4">Application History</h4>
+                    {% if my_apps %}
+                        <div class="row g-3">
+                            {% for app in my_apps %}
+                            <div class="col-md-6">
+                                <div class="glass-card p-3 h-100 border-start border-4 {% if app.status == 'Hired' %}border-success{% elif app.status == 'Interview' %}border-warning{% else %}border-secondary{% endif %}">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <h6 class="fw-bold mb-0">{{ app.job.title }}</h6>
+                                        <span class="badge {% if app.status == 'Hired' %}bg-success{% elif app.status == 'Interview' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">{{ app.status }}</span>
+                                    </div>
+                                    <p class="small text-muted mb-2">{{ app.job.employer.username }}</p>
+                                    {% if app.status == 'Interview' %}
+                                        <div class="mt-2 p-2 bg-warning bg-opacity-10 rounded text-center small text-warning fw-bold"><i class="fas fa-envelope me-1"></i> Check Email for Link</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5"><p class="text-muted">No applications yet.</p></div>
+                    {% endif %}
+                </div>
             </div>
         </div>
-        <!-- Sidebar ... -->
+
+        <!-- 4. SIDEBAR -->
+        <div class="col-lg-4">
+            <div class="glass-card p-4 mb-4">
+                <h5 class="fw-bold mb-3">Profile Health</h5>
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex align-items-center"><i class="fas {% if current_user.profile.video_resume_path %}fa-check-circle text-success{% else %}fa-circle text-muted{% endif %} me-3"></i><span>Video Resume</span></div>
+                    <div class="d-flex align-items-center"><i class="fas {% if current_user.profile.resume_path %}fa-check-circle text-success{% else %}fa-circle text-muted{% endif %} me-3"></i><span>PDF Resume</span></div>
+                    <div class="d-flex align-items-center"><i class="fas {% if current_user.profile.is_verified %}fa-check-circle text-success{% else %}fa-circle text-muted{% endif %} me-3"></i><span>Admin Verification</span></div>
+                </div>
+                {% if profile_completion < 100 %}
+                    <div class="mt-4 pt-3 border-top border-secondary"><a href="{{ url_for('edit_profile') }}" class="btn btn-sm btn-primary w-100">Complete Profile (+{{ 100 - profile_completion }}%)</a></div>
+                {% endif %}
+            </div>
+
+            <div class="glass-card p-4">
+                <h5 class="fw-bold mb-3">Quick Actions</h5>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('resume_builder') }}" class="btn btn-outline-light text-start"><i class="fas fa-magic me-2 text-info"></i> AI Resume Builder</a>
+                    <button class="btn btn-outline-light text-start" onclick="getLocation()"><i class="fas fa-map-marker-alt me-2 text-danger"></i> Find Jobs Near Me</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-bold" id="toastMessage">
+                Fetching location...
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', options);
+
+    // Custom Toast Function
+    function showToast(message, type = 'primary') {
+        const toastEl = document.getElementById('liveToast');
+        const toastBody = document.getElementById('toastMessage');
+        
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        toastBody.textContent = message;
+        
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+    // Geolocation Logic with Toast
+    function getLocation() {
+        if(navigator.geolocation) {
+            showToast("Fetching your location...", "info");
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    // In a real app, send these coords to the filter logic
+                    showToast(`Location Found: ${position.coords.latitude.toFixed(2)}, ${position.coords.longitude.toFixed(2)}`, "success");
+                    // Example: window.location.href = `/dashboard?lat=${position.coords.latitude}&lng=${position.coords.longitude}`;
+                },
+                (error) => {
+                    showToast("Location access denied or unavailable.", "danger");
+                }
+            );
+        } else { 
+            showToast("Geolocation is not supported by your browser.", "danger"); 
+        }
+    }
+</script>
 {% endblock %}

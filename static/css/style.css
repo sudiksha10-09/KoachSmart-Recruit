@@ -2,30 +2,30 @@
 
 /* --- 1. HIGH CONTRAST VARIABLES --- */
 :root {
-    /* Brand Colors */
+    /* Brand Colors (Kept vibrant but readable) */
     --primary: #00f260;      /* Neon Green */
     --secondary: #0575e6;    /* Electric Blue */
     
-    /* DARK MODE (Default) */
-    --bg-body: #000000;
-    --glass-bg: #111111;      /* Solid Dark Grey for better contrast */
-    --glass-border: #333333;
-    --text-main: #ffffff;
-    --text-muted: #b0b0b0;    /* Light Grey */
-    --card-shadow: rgba(0, 0, 0, 0.5);
-    --input-bg: #1a1a1a;
+    /* DARK MODE (Default) - High Contrast */
+    --bg-body: #000000;                 /* Pure Black */
+    --glass-bg: #111111;                /* Solid Dark Grey (No Transparency) */
+    --glass-border: #ffffff;            /* Stark White Border */
+    --text-main: #ffffff;               /* Pure White */
+    --text-muted: #e0e0e0;              /* Very Light Grey (Almost White) */
+    --card-shadow: rgba(255, 255, 255, 0.1); /* Subtle white glow */
+    --input-bg: #000000;                /* Black Input */
     --nav-bg: #000000;
 }
 
-/* LIGHT MODE OVERRIDES */
+/* LIGHT MODE OVERRIDES - High Contrast */
 [data-theme="light"] {
-    --bg-body: #f4f4f5;       /* Light Grey Background (Not pure white, helps cards pop) */
-    --glass-bg: #ffffff;      /* Pure White Cards */
-    --glass-border: #cbd5e1;  /* Distinct Grey Border */
-    --text-main: #0f172a;     /* Deep Navy/Black */
-    --text-muted: #475569;    /* Dark Grey */
-    --card-shadow: rgba(0, 0, 0, 0.1);
-    --input-bg: #ffffff;
+    --bg-body: #ffffff;                 /* Pure White */
+    --glass-bg: #ffffff;                /* Solid White Cards */
+    --glass-border: #000000;            /* Stark Black Border */
+    --text-main: #000000;               /* Pure Black */
+    --text-muted: #000000;              /* Pure Black (No Grey) */
+    --card-shadow: rgba(0, 0, 0, 0.2);
+    --input-bg: #ffffff;                /* White Input */
     --nav-bg: #ffffff;
 }
 
@@ -38,104 +38,156 @@ body {
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* CRITICAL FIX: Override Bootstrap Text Utilities to match Theme */
-.text-white, .text-light, .text-body { color: var(--text-main) !important; }
-.text-muted, .text-secondary { color: var(--text-muted) !important; }
-.text-dark { color: var(--text-main) !important; }
-
-h1, h2, h3, h4, h5, h6, p, li, span, div, label, small, i {
-    color: var(--text-main);
+/* FORCE ALL TEXT TO BE MAIN COLOR */
+h1, h2, h3, h4, h5, h6, p, li, span, div, label, small, i, b, strong {
+    color: var(--text-main) !important;
 }
 
-/* Keep Brand Colors Intact */
-.text-primary { color: var(--primary) !important; }
-.text-info { color: #38bdf8 !important; }
-.text-warning { color: #fbbf24 !important; }
-.text-danger { color: #ef4444 !important; }
-.text-success { color: #22c55e !important; }
+/* Exception: Text inside specific colored badges/buttons */
+.btn-primary, .badge, .alert {
+    color: #000000 !important; /* Always black text on colored backgrounds */
+}
 
-[data-theme="light"] .text-info { color: #0284c7 !important; }
-[data-theme="light"] .text-warning { color: #d97706 !important; }
+/* Fix Muted Text visibility */
+.text-muted, .text-secondary, .text-white-50 {
+    color: var(--text-muted) !important;
+    opacity: 1 !important;
+}
 
 /* Links */
-a { text-decoration: none; color: var(--primary); font-weight: 600; }
-a:hover { color: var(--text-main); }
+a { text-decoration: none; color: var(--primary); font-weight: 700; }
+a:hover { color: var(--text-main); text-decoration: underline; }
 
 /* --- 3. CARDS & CONTAINERS --- */
 .glass-card {
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
+    background-color: var(--glass-bg) !important;
+    border: 2px solid var(--glass-border);
     border-radius: 16px;
-    box-shadow: 0 4px 6px var(--card-shadow);
+    box-shadow: 0 4px 10px var(--card-shadow);
     padding: 24px;
+    color: var(--text-main) !important;
 }
-
-/* CRITICAL FIX: Override Bootstrap Background Utilities */
-.bg-dark, .bg-black { background-color: var(--glass-bg) !important; }
-.bg-light, .bg-white { background-color: var(--glass-bg) !important; }
 
 /* Navbar */
 .glass-nav {
-    background: var(--nav-bg);
-    border-bottom: 1px solid var(--glass-border);
-    padding: 12px 0;
+    background-color: var(--nav-bg) !important;
+    border-bottom: 2px solid var(--glass-border);
+    padding: 15px 0;
 }
-.navbar-brand { color: var(--text-main) !important; font-weight: 800; letter-spacing: -0.5px; }
-.nav-link { color: var(--text-main) !important; font-weight: 500; }
-.nav-link:hover { color: var(--primary) !important; }
+.navbar-brand { color: var(--text-main) !important; font-weight: 800; font-size: 1.8rem; }
+.nav-link { color: var(--text-main) !important; font-weight: 700; }
 
-/* --- 4. FORMS --- */
-.form-control, .form-select, textarea, input {
+/* --- 4. FORMS & INPUTS (CRITICAL FIX) --- */
+.form-control, .form-select, input, textarea, select {
     background-color: var(--input-bg) !important;
-    border: 1px solid var(--glass-border) !important;
+    border: 2px solid var(--glass-border) !important;
     color: var(--text-main) !important;
     border-radius: 8px;
+    font-weight: 600;
 }
-.form-control:focus {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(0, 242, 96, 0.1) !important;
-}
-::placeholder { color: var(--text-muted) !important; opacity: 0.6; }
 
-/* Fix Dropdown visibility */
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary) !important;
+    background-color: var(--input-bg) !important;
+    color: var(--text-main) !important;
+    box-shadow: none;
+}
+
+/* Placeholder Visibility */
+::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.8;
+}
+
+/* Dropdown Options */
 select option {
-    background-color: var(--bg-body);
-    color: var(--text-main);
+    background-color: var(--bg-body) !important;
+    color: var(--text-main) !important;
 }
 
 /* --- 5. BUTTONS --- */
 .btn-primary {
     background-color: var(--primary) !important;
-    border: none;
-    color: #000 !important; /* Always black text */
-    font-weight: 700;
-    padding: 10px 24px;
-    border-radius: 8px;
-}
-.btn-outline-light {
-    border: 2px solid var(--glass-border);
-    color: var(--text-main);
-}
-.btn-outline-light:hover {
-    background-color: var(--text-main);
-    color: var(--bg-body);
+    border: 2px solid var(--primary) !important;
+    color: #000000 !important; /* Force Black Text */
+    font-weight: 800;
 }
 
-/* --- 6. RESUME BUILDER (Paper Style) --- */
+.btn-outline-light {
+    border: 2px solid var(--glass-border);
+    color: var(--text-main) !important;
+    background: transparent;
+    font-weight: 700;
+}
+
+.btn-outline-light:hover {
+    background-color: var(--text-main) !important;
+    color: var(--bg-body) !important; /* Invert colors on hover */
+}
+
+/* --- 6. TABLES --- */
+.table {
+    --bs-table-bg: transparent;
+    color: var(--text-main) !important;
+    border-color: var(--glass-border);
+}
+
+.table th, .table td {
+    color: var(--text-main) !important;
+    background-color: transparent !important;
+    border-bottom: 2px solid var(--glass-border);
+}
+
+.table-hover tbody tr:hover td {
+    background-color: rgba(128, 128, 128, 0.3) !important; /* Visible hover */
+}
+
+/* --- 7. ROLE SELECTION CARDS FIX --- */
+.role-card-label {
+    border: 3px solid var(--glass-border);
+    color: var(--text-main) !important;
+    background-color: var(--input-bg);
+}
+
+.btn-check:checked + .role-card-label {
+    background-color: var(--primary) !important;
+    border-color: var(--primary) !important;
+    color: #000000 !important; /* Force Black when selected */
+}
+
+.btn-check:checked + .role-card-label * {
+    color: #000000 !important; /* Force all children black */
+}
+
+/* --- 8. RESUME BUILDER OVERRIDES --- */
 #printableResume {
     background-color: #ffffff !important;
     color: #000000 !important;
-    border: 1px solid #e2e8f0;
+    border: 2px solid #000000;
 }
-#printableResume * { color: #000000 !important; }
-#printableResume .text-muted { color: #64748b !important; }
-#printableResume .badge { color: #fff !important; }
 
-/* --- 7. UTILS --- */
-.badge { color: #000 !important; font-weight: 700; }
-.bg-success { background-color: #4ade80 !important; }
-.bg-info { background-color: #38bdf8 !important; }
-.bg-secondary { background-color: #94a3b8 !important; }
+#printableResume * {
+    color: #000000 !important;
+}
 
-.animate-fade-up { animation: fadeInUp 0.5s ease-out forwards; }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+#printableResume .badge {
+    color: #ffffff !important; /* Badges keep white text */
+}
+
+/* --- 9. UTILS --- */
+.text-success { color: #00aa00 !important; }
+[data-theme="dark"] .text-success { color: #00ff00 !important; }
+
+.bg-success { background-color: #2ecc71 !important; color: #000 !important; }
+.bg-warning { background-color: #f1c40f !important; color: #000 !important; }
+.bg-danger { background-color: #e74c3c !important; color: #000 !important; }
+.bg-info { background-color: #3498db !important; color: #000 !important; }
+.bg-light { background-color: #ecf0f1 !important; color: #000 !important; }
+.bg-dark { background-color: #2c3e50 !important; color: #fff !important; }
+
+/* Fix Bootstrap Alerts */
+.alert {
+    background-color: var(--glass-bg);
+    border: 2px solid var(--primary);
+    color: var(--text-main) !important;
+}

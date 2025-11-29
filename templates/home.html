@@ -24,10 +24,10 @@
         <h1 class="display-3 fw-bold mb-4 text-white animate-fade-up">
             Recruitment, <span class="text-primary">Reimagined.</span>
         </h1>
-        <p class="lead mb-5 text-white opacity-75 animate-fade-up">
+        <p class="lead mb-5 text-white opacity-75 animate-fade-up" style="animation-delay: 0.2s;">
             AI-Powered Hiring for Sports. Video Resumes. Instant Trust.
         </p>
-        <div class="animate-fade-up">
+        <div class="animate-fade-up" style="animation-delay: 0.4s;">
             {% if not current_user.is_authenticated %}
                 <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-3">Get Started</a>
                 <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Login</a>
@@ -38,43 +38,97 @@
     </div>
 </div>
 
-<!-- WORKFLOW -->
+<!-- ABOUT US SECTION (NEW) -->
 <div class="container py-5 my-5">
-    <div class="text-center mb-5">
+    <div class="row align-items-center">
+        <div class="col-lg-6 mb-4 mb-lg-0 animate-fade-up">
+            <h5 class="text-primary text-uppercase letter-spacing-2">About Koach Smart</h5>
+            <h2 class="display-5 fw-bold mb-4">Empowering the Future of Sports</h2>
+            <p class="text-muted lead">
+                Koach Smart is India's first dedicated recruitment ecosystem for the sports industry. We bridge the gap between talented coaches and top-tier academies using advanced AI and data analytics.
+            </p>
+            <p class="text-muted">
+                Our mission is to bring transparency, trust, and efficiency to sports hiring. Whether you are a grassroots academy looking for a certified trainer or a professional coach seeking your next big break, Koach Smart is your partner in growth.
+            </p>
+            <div class="row mt-4">
+                <div class="col-6">
+                    <h3 class="fw-bold text-white">500+</h3>
+                    <p class="text-muted small">Active Coaches</p>
+                </div>
+                <div class="col-6">
+                    <h3 class="fw-bold text-white">120+</h3>
+                    <p class="text-muted small">Partner Academies</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 animate-fade-up" style="animation-delay: 0.2s;">
+            <div class="glass-card p-4 position-relative">
+                <!-- Decorative Elements -->
+                <div class="position-absolute top-0 end-0 bg-primary rounded-circle p-2 mt-n3 me-n3 shadow-lg"></div>
+                <div class="position-absolute bottom-0 start-0 bg-secondary rounded-circle p-2 mb-n3 ms-n3 shadow-lg"></div>
+                
+                <h4 class="fw-bold mb-3"><i class="fas fa-quote-left text-primary me-2"></i>Why We Started</h4>
+                <p class="text-muted fst-italic">
+                    "We realized that while corporate hiring moved to LinkedIn and AI, sports hiring was still stuck in WhatsApp groups. Great coaches were invisible, and academies struggled to verify credentials. Koach Smart fixes this."
+                </p>
+                <div class="d-flex align-items-center mt-3">
+                    <div class="bg-secondary rounded-circle p-2 me-2">
+                        <i class="fas fa-user text-white"></i>
+                    </div>
+                    <div>
+                        <span class="fw-bold d-block text-white">Founding Team</span>
+                        <small class="text-muted">Koach Smart</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- WORKFLOW -->
+<div class="container py-5 my-5 bg-dark bg-opacity-25 rounded-4">
+    <div class="text-center mb-5 animate-fade-up">
         <h5 class="text-primary fw-bold text-uppercase">Workflow</h5>
-        <!-- REMOVED text-white class, now it adapts -->
         <h2 class="fw-bold display-5">How It Works</h2>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 px-4">
         <!-- Coach Card -->
-        <div class="col-md-3">
-            <div class="glass-card h-100 p-4 text-center">
-                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+        <div class="col-md-3 animate-fade-up" style="animation-delay: 0.1s;">
+            <div class="glass-card h-100 p-4 text-center hover-elevate">
+                <div class="bg-dark bg-opacity-50 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="fas fa-user-plus fa-2x text-primary"></i>
+                </div>
                 <h5>1. Build Profile</h5>
                 <p class="text-muted small">Upload video resumes and get your AI Score.</p>
             </div>
         </div>
         <!-- Verify Card -->
-        <div class="col-md-3">
-            <div class="glass-card h-100 p-4 text-center">
-                <i class="fas fa-check-circle fa-3x text-info mb-3"></i>
+        <div class="col-md-3 animate-fade-up" style="animation-delay: 0.2s;">
+            <div class="glass-card h-100 p-4 text-center hover-elevate">
+                <div class="bg-dark bg-opacity-50 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="fas fa-check-circle fa-2x text-info"></i>
+                </div>
                 <h5>2. Get Verified</h5>
                 <p class="text-muted small">Upload ID & Certs to earn the Trusted Badge.</p>
             </div>
         </div>
         <!-- Search Card -->
-        <div class="col-md-3">
-            <div class="glass-card h-100 p-4 text-center">
-                <i class="fas fa-search-location fa-3x text-warning mb-3"></i>
+        <div class="col-md-3 animate-fade-up" style="animation-delay: 0.3s;">
+            <div class="glass-card h-100 p-4 text-center hover-elevate">
+                <div class="bg-dark bg-opacity-50 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="fas fa-search-location fa-2x text-warning"></i>
+                </div>
                 <h5>3. Smart Search</h5>
                 <p class="text-muted small">Filter jobs by sport, location, and salary.</p>
             </div>
         </div>
         <!-- Hire Card -->
-        <div class="col-md-3">
-            <div class="glass-card h-100 p-4 text-center">
-                <i class="fas fa-handshake fa-3x text-success mb-3"></i>
+        <div class="col-md-3 animate-fade-up" style="animation-delay: 0.4s;">
+            <div class="glass-card h-100 p-4 text-center hover-elevate">
+                <div class="bg-dark bg-opacity-50 rounded-circle d-inline-flex p-3 mb-3">
+                    <i class="fas fa-handshake fa-2x text-success"></i>
+                </div>
                 <h5>4. Get Hired</h5>
                 <p class="text-muted small">One-click apply and automated interview scheduling.</p>
             </div>
@@ -83,30 +137,54 @@
 </div>
 
 <!-- TECH SECTION -->
-<!-- REMOVED bg-dark text-white, let CSS handle it -->
 <div class="container-fluid py-5" style="background-color: var(--glass-bg); border-top: 1px solid var(--glass-border);">
     <div class="container">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4">
+            <div class="col-lg-6 mb-4 animate-fade-up">
                 <h5 class="text-primary text-uppercase">The Technology</h5>
                 <h2 class="display-5 fw-bold mb-4">Data-Driven Scouting</h2>
                 <p class="text-muted mb-4 lead">
-                    We analyze 50+ data points from every profile to match the right coach with the right academy.
+                    We don't just list jobs. We analyze 50+ data points from every video resume to predict the perfect coach-academy fit.
                 </p>
                 <div class="row g-4">
                     <div class="col-6">
-                        <h5 class="fw-bold"><i class="fas fa-chart-line text-primary me-2"></i>AI Analysis</h5>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-chart-line text-primary fa-2x me-3"></i>
+                            <div>
+                                <h5 class="fw-bold mb-0">AI Analysis</h5>
+                                <small class="text-muted">Skill Scoring</small>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-6">
-                        <h5 class="fw-bold"><i class="fas fa-shield-alt text-info me-2"></i>Verified Trust</h5>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shield-alt text-info fa-2x me-3"></i>
+                            <div>
+                                <h5 class="fw-bold mb-0">Verified Trust</h5>
+                                <small class="text-muted">Background Checks</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 text-center">
-                <img src="{{ url_for('static', filename='images/future_tech.jpg') }}" 
-                     class="img-fluid rounded-4 shadow-lg" 
-                     style="border: 1px solid var(--glass-border);"
-                     alt="Future Sports Tech">
+            <div class="col-lg-6 text-center animate-fade-up" style="animation-delay: 0.2s;">
+                <div class="position-relative d-inline-block">
+                    <!-- Glow effect behind image -->
+                    <div class="position-absolute top-50 start-50 translate-middle bg-primary opacity-25 rounded-circle" style="width: 300px; height: 300px; filter: blur(50px);"></div>
+                    
+                    <img src="{{ url_for('static', filename='images/future_tech.jpg') }}" 
+                         class="img-fluid rounded-4 shadow-lg position-relative z-1" 
+                         style="border: 1px solid var(--glass-border);"
+                         alt="Future Sports Tech">
+                         
+                    <!-- Floating Badge -->
+                    <div class="glass-card position-absolute bottom-0 start-0 m-4 p-3 z-2 animate-float">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-grow text-success spinner-grow-sm me-2" role="status"></div>
+                            <span class="text-white small fw-bold">Live Matching...</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
