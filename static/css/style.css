@@ -142,6 +142,18 @@ p, span, div, label, td, th, li {
     color: white !important;
 }
 
+/* ADDED: Missing Dark Button Class */
+.btn-outline-dark {
+    border: 2px solid var(--text-dark);
+    color: var(--text-dark) !important;
+    background: transparent;
+}
+
+.btn-outline-dark:hover {
+    background-color: var(--text-dark);
+    color: white !important;
+}
+
 .btn-lg {
     padding: 1rem 2rem;
     font-size: 1.1rem;
@@ -613,15 +625,20 @@ p, span, div, label, td, th, li {
 }
 
 /* === CARDS === */
-.card-modern {
+.card-modern, 
+/* ADDED: Missing class to support your HTML */
+.glass-card {
     background: white;
     border-radius: 12px;
     box-shadow: var(--shadow-md);
     border: none;
     transition: all 0.3s ease;
+    /* Force text color for existing glass-card elements */
+    color: var(--text-dark);
 }
 
-.card-modern:hover {
+.card-modern:hover,
+.glass-card:hover {
     box-shadow: var(--shadow-xl);
     transform: translateY(-5px);
 }
@@ -736,7 +753,7 @@ p, span, div, label, td, th, li {
     }
     
     .hero-subtitle {
-        font-size: 1rem;
+        font-size: 1.0rem;
     }
     
     .hero-stats {

@@ -687,7 +687,62 @@ def delete_profile():
     logout_user()
     flash('Your account has been permanently deleted.')
     return redirect(url_for('home'))
+@app.route('/job/edit/<int:job_id>', methods=['GET', 'POST'])
+@login_required
+def edit_job(job_id):
+    if current_user.role != 'employer': return redirect(url_for('dashboard'))
+    job = Job.query.get_or_404(job_id)
+    
+    # Security Check: Ensure the logged-in user owns this job
+    if job.employer_id != current_user.id:
+        flash("Unauthorized access!")
+        return redirect(url_for('dashboard'))
 
+    if request.method == 'POST':
+        job.title = request.form.get('title')
+        job.sport = request.form.get('sport')
+        job.location = request.form.get('location')
+        job.description = request.form.get('description')
+        job.requirements = request.form.get('requirements')
+        job.screening_questions = request.form.get('screening_questions')
+        job.salary_range = request.form.get('salary')
+        job.job_type = request.form.get('job_type')
+        job.working_hours = request.form.get('working_hours')
+        
+        # Only update coords if user actually picked a new point
+        lat = request.form.get('lat')
+        lng = request.form.get('lng')
+        if lat and lng and lat.strip() != '' and lng.strip() != '':
+            job.lat = float(lat)
+            job.lng = float(lng)
+            
+        db.session.commit()
+        flash("Job Updated Successfully!")
+        return redirect(url_for('dashboard'))
+    
+    # We use a separate template for editing, or reuse job_new with context
+    # ideally create templates/job_edit.html (code provided in previous response)
+    return render_template('job_edit.html', job=job)
+
+# --- FORGOT PASSWORD ROUTES ---
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form.get('email')
+        user = User.query.filter_by(email=email).first()
+        if user:
+            flash(f"Password reset link sent to {email}. Please check your inbox.")
+            return redirect(url_for('login'))
+        else:
+            flash("Email not found.")
+    return render_template('forgot_password.html')
+
+@app.route('/reset-password-mock', methods=['GET', 'POST'])
+def reset_password_mock():
+    if request.method == 'POST':
+        flash("Your password has been reset! Please login.")
+        return redirect(url_for('login'))
+    return render_template('reset_password.html')
 # --- STATIC PAGES ---
 @app.route('/about')
 def about(): return render_template('pages/about.html')

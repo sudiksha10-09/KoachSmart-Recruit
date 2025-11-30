@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-9">
+            <div class="glass-card p-4 p-md-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">Edit Job: {{ job.title }}</h3>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light btn-sm">Cancel</a>
+                </div>
+                
+                <form method="POST">
+                    <!-- 1. Title -->
+                    <div class="mb-4">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Job Title</label>
+                        <input type="text" class="form-control" name="title" value="{{ job.title }}" required>
+                    </div>
+
+                    <!-- 2. Sport & Venue -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Sport</label>
+                            <select class="form-select" name="sport">
+                                <option value="Cricket" {% if job.sport == 'Cricket' %}selected{% endif %}>Cricket</option>
+                                <option value="Football" {% if job.sport == 'Football' %}selected{% endif %}>Football</option>
+                                <option value="Tennis" {% if job.sport == 'Tennis' %}selected{% endif %}>Tennis</option>
+                                <option value="Basketball" {% if job.sport == 'Basketball' %}selected{% endif %}>Basketball</option>
+                                <option value="Badminton" {% if job.sport == 'Badminton' %}selected{% endif %}>Badminton</option>
+                                <option value="Athletics" {% if job.sport == 'Athletics' %}selected{% endif %}>Athletics</option>
+                                <option value="Swimming" {% if job.sport == 'Swimming' %}selected{% endif %}>Swimming</option>
+                                <option value="Kabaddi" {% if job.sport == 'Kabaddi' %}selected{% endif %}>Kabaddi</option>
+                                <option value="Other" {% if job.sport == 'Other' %}selected{% endif %}>Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Venue Name</label>
+                            <input type="text" class="form-control" name="location" value="{{ job.location }}" required>
+                        </div>
+                    </div>
+
+                    <!-- 3. Type & Hours -->
+                    <div class="row g-3 mb-4 p-3 rounded-3 border border-secondary bg-black bg-opacity-25">
+                        <div class="col-md-6">
+                            <label class="form-label text-primary small text-uppercase fw-bold">Job Category</label>
+                            <select class="form-select" name="job_type">
+                                <option value="Full Time" {% if job.job_type == 'Full Time' %}selected{% endif %}>Full Time</option>
+                                <option value="Part Time" {% if job.job_type == 'Part Time' %}selected{% endif %}>Part Time</option>
+                                <option value="Internship" {% if job.job_type == 'Internship' %}selected{% endif %}>Internship</option>
+                                <option value="Contract" {% if job.job_type == 'Contract' %}selected{% endif %}>Contract / Freelance</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-primary small text-uppercase fw-bold">Working Hours</label>
+                            <input type="text" class="form-control" name="working_hours" value="{{ job.working_hours or '' }}">
+                        </div>
+                    </div>
+
+                    <!-- 4. Location Picker (Pre-filled) -->
+                    <div class="mb-4">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Update Location (Optional)</label>
+                        <div class="input-group mb-2">
+                            <input type="text" id="addressInput" class="form-control" placeholder="Search New Area...">
+                            <button class="btn btn-outline-light" type="button" onclick="searchAddress()">Search</button>
+                        </div>
+                        <div id="pickerMap" style="height: 250px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);"></div>
+                        <input type="hidden" name="lat" id="lat" value="{{ job.lat }}">
+                        <input type="hidden" name="lng" id="lng" value="{{ job.lng }}">
+                    </div>
+
+                    <!-- 5. Details -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Description</label>
+                            <textarea class="form-control" name="description" rows="5">{{ job.description }}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small text-uppercase fw-bold">Key Requirements</label>
+                            <textarea class="form-control" name="requirements" rows="5">{{ job.requirements }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Screening Questions</label>
+                        <textarea class="form-control" name="screening_questions" rows="2">{{ job.screening_questions }}</textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label text-muted small text-uppercase fw-bold">Monthly Salary (INR)</label>
+                        <input type="text" class="form-control" name="salary" value="{{ job.salary_range }}">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-3 fw-bold text-uppercase">Update Job</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialize map with existing job location or default
+    var startLat = {{ job.lat if job.lat else 20.5937 }};
+    var startLng = {{ job.lng if job.lng else 78.9629 }};
+    var map = L.map('pickerMap').setView([startLat, startLng], 10);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+    // Add existing marker if location exists
+    var marker;
+    {% if job.lat and job.lng %}
+        marker = L.marker([startLat, startLng]).addTo(map);
+    {% endif %}
+
+    function updateLocation(lat, lng) {
+        document.getElementById('lat').value = lat;
+        document.getElementById('lng').value = lng;
+        if (marker) marker.setLatLng([lat, lng]);
+        else marker = L.marker([lat, lng]).addTo(map);
+        map.panTo([lat, lng]);
+    }
+    map.on('click', function(e) { updateLocation(e.latlng.lat, e.latlng.lng); });
+    
+    async function searchAddress() {
+        var query = document.getElementById('addressInput').value;
+        if (!query) return;
+        var url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data && data.length > 0) updateLocation(parseFloat(data[0].lat), parseFloat(data[0].lon));
+        } catch (e) { console.log(e); }
+    }
+</script>
+{% endblock %}
